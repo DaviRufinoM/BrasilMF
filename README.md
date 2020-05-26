@@ -9,5 +9,5 @@ O seguinte repositório tem os seguintes objetivos:
 2. Fazer uma tabela com todas as informações
 3. Criar novos gráficos
 4. Fazer uma base de dados
-5. Criar um veículo de informação e atualização gratuído do mercado financeiro brasileiro
+5. Criar um veículo de informação e atualização gratuíto do mercado financeiro brasileiro
 6. Atualização de normas da CVM e BACEN
