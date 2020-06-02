@@ -1,4 +1,5 @@
 #O que é?
+
 BrasilMF é um pacote de R que tem como objetivo munir de informações todas as pessoas que operam no mercado financeiro brasileiro ou quem simplemente tem interesses educacionais. O pacote ainda está em desenvolvimento
 
 #Principais ferramentas
@@ -8,10 +9,10 @@ BrasilMF é um pacote de R que tem como objetivo munir de informações todas as
 * Novos gráficos
 * Atualização diário de normas
 
-#Como baixar
+# Como baixar
 
 ```R
-#Utiliza a biblioteca devtools
+#Utilizar a biblioteca devtools
 library(devtools)
 ```
 ```R
@@ -19,7 +20,7 @@ library(devtools)
 install_github(SrMercado/BrasilMF)
 ```
 
-#Dependências
+# Dependências
 
 * bizdays
 * httr
@@ -28,10 +29,11 @@ install_github(SrMercado/BrasilMF)
 * rvest
 * htmltools
 
-#Dúvidas
+# Dúvidas
+
 enviar e-mail para davirufino@gmail.com
 
-#Objetivo final
+# Objetivo final
 
 * Puxar todas as informações públicas do mercado financeiro brasileiro (ex. BACEN, B3, CVM, ANBIMA, ALPHA VANTAGE, YAHOO FINANCE)
 * Fazer uma tabela com todas as informações
