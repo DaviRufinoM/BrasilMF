@@ -1,8 +1,8 @@
-#O que é?
+# O que é?
 
 BrasilMF é um pacote de R que tem como objetivo munir de informações todas as pessoas que operam no mercado financeiro brasileiro ou quem simplemente tem interesses educacionais. O pacote ainda está em desenvolvimento
 
-#Principais ferramentas
+# Principais ferramentas
 
 * Rápido acesso as informações do BACEN, B3, CVM, ANBIMA, ALPHA, VANTAGE, YAHOO, FINANCE
 * Informações já formatadas
