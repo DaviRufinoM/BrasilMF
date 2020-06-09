@@ -1,4 +1,4 @@
-dados_bacen <- function(cod, dt_ini,dt_fim) {
+dados_bacen <- function(cod, dt_ini = Sys.Date()-365,dt_fim = Sys.Date()) {
 
   if (missing(cod)) {
     warning("Informe o campo cod")
@@ -13,4 +13,18 @@ dados_bacen <- function(cod, dt_ini,dt_fim) {
     base <- read.csv(url, sep = ";")
     return(base)
   }
+}
+
+procura_bacen <- function(palavra = "") {
+  load("data/INFO_BCB.RData")
+  for (i in 1:nrow(INF_BACEN)) {
+    if (gregexpr(palavra,INF_BACEN$Desc)[[i]][1] > 1) {
+      if (exists("bacen_infor")) {
+        bacen_infor <- bind_rows(bacen_infor, INF_BACEN[i,])
+      } else {
+        bacen_infor <- INF_BACEN[i,]
+      }
+    }
+  }
+  return(bacen_infor)
 }

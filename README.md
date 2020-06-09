@@ -1,3 +1,6 @@
+![funny-cartoon-capitalist-pig-caricature-rich-vector-23887600](https://user-images.githubusercontent.com/65870501/83472998-f0ad6d00-a45e-11ea-8c7d-609a43a61e9a.jpg)
+
+
 # O que é?
 
 BrasilMF é um pacote de R que tem como objetivo munir de informações todas as pessoas que operam no mercado financeiro brasileiro ou quem simplemente tem interesses educacionais. O pacote ainda está em desenvolvimento
@@ -6,7 +9,6 @@ BrasilMF é um pacote de R que tem como objetivo munir de informações todas as
 
 * Rápido acesso as informações do BACEN, B3, CVM, ANBIMA, ALPHA, VANTAGE, YAHOO, FINANCE
 * Informações já formatadas
-* Novos gráficos
 * Atualização diário de normas
 
 # Como baixar
@@ -32,12 +34,13 @@ install_github(SrMercado/BrasilMF)
 # Dúvidas
 
 enviar e-mail para davirufino@gmail.com
+enviar e-mail para bmvolker@gmail.com
 
 # Objetivo final
 
-* Puxar todas as informações públicas do mercado financeiro brasileiro (ex. BACEN, B3, CVM, ANBIMA, ALPHA VANTAGE, YAHOO FINANCE)
+* Puxar todas as informações públicas disponíveis no mercado financeiro brasileiro (ex. BACEN, B3, CVM, ANBIMA, ALPHA VANTAGE, YAHOO FINANCE)
 * Fazer uma tabela com todas as informações
 * Criar novos gráficos
-* Fazer uma base de dados
-* Criar um veículo de informação e atualização gratuíto do mercado financeiro brasileiro
+* Tutorial básico de programação aplicado a finanças
+* Criar um veículo de informação e atualização gratuita do mercado financeiro brasileiro
 * Atualização de normas da CVM e BACEN
