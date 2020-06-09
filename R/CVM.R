@@ -1,30 +1,14 @@
 #Fundos de Investimento: Informacao Cadastral
-dados_cvm_fi_icvm555 <- function(dt_ini = "2020-02-26",dt_fim = Sys.Date()-1) {
+dados_cvm_fi_icvm555 <- function(data = Sys.Date()-1) {
 
   cal <- create.calendar("Brazil/ANBIMA", holidaysANBIMA, weekdays=c("saturday", "sunday"))
 
-  datas <- bizseq(dt_ini,dt_fim,cal)
-
-  dt_ini <- format(as.Date(dt_ini), "%Y%m%d")
-  dt_fim <- format(as.Date(dt_fim), "%Y%m%d")
-
-  for (i in datas) {
-    i <- format(as.Date(i,"1970-01-01"), "%Y%m%d")
-    url <- paste0("http://dados.cvm.gov.br/dados/FI/CAD/DADOS/inf_cadastral_fi_",i,".csv")
-    assign(paste0("cvm555_",i),read.csv(url, sep = ";"))
-  }
-
-  tabelas <- ls()
-  tabelas <- tabelas[substr(tabelas,1,3) == "cvm"]
-
-  for (i in 1:length(tabelas)) {
-    if (i == 1) {
-    } else {
-      assign(tabelas[1],rbind(get(tabelas[1]),get(tabelas[i])))
-    }
-  }
-  assign("cvm", get(tabelas[1]))
-  return(cvm)
+  data <- bizseq(data-5,data,cal)
+  data <- max(data)
+  data <- format(as.Date(data,"1970-01-01"), "%Y%m%d")
+  url <- paste0("http://dados.cvm.gov.br/dados/FI/CAD/DADOS/inf_cadastral_fi_",data,".csv")
+  tabela <- read.csv(url, sep = ";")
+  return(tabela)
 }
 
 #Fundos Estruturados: Informacao Cadastral

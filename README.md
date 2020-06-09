@@ -22,7 +22,7 @@ library(devtools)
 install_github(SrMercado/BrasilMF)
 ```
 
-# Dependências
+# Dependências 
 
 * bizdays
 * httr
