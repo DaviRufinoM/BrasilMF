@@ -237,29 +237,6 @@ dados_cvm_inf_cadastral <- function(tipo) {
   }
 }
 
-#Fundos de Investimento: Documentos Informe Diario
-dados_cvm_inf_diario_fi <- function(dt_ini = "2019-05-02", dt_fim = Sys.Date()-1) {
-  dt_ini <- max("2017-01-02", dt_ini)
-  cal <- create.calendar("Brazil/ANBIMA", holidaysANBIMA, weekdays=c("saturday", "sunday"))
-  datas <- bizseq(dt_ini, dt_fim, cal)
-  datas <- unique(format(datas, "%Y%m"))
-  total <- length(datas)
-  pb <- txtProgressBar(min = 0, max = total, style = 3)
-  for (i in datas) {
-    url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_',i,'.csv')
-    if (i == datas[1]) {
-      assign(paste0("inf_dia_",datas[1]),read.csv(url, sep = ";", stringsAsFactors = FALSE))
-    } else {
-      url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_',i,'.csv')
-      assign(paste0("inf_dia_",datas[1]), rbind(get(paste0("inf_dia_",datas[1])), read.csv(url, sep = ";", stringsAsFactors = FALSE)))
-    }
-    setTxtProgressBar(pb, i)
-  }
-  assign("tabela",get(paste0("inf_dia_",datas[1]))[get(paste0("inf_dia_",datas[1]))$DT_COMPTC >= dt_ini & get(paste0("inf_dia_",datas[1]))$DT_COMPTC <= dt_fim,])
-  close(pb)
-  return(tabela)
-}
-
 #DFP Anual
 dados_cvm_dfp <- function(documento, ano, tipo) {
   url <- paste0('http://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/',documento,'/DADOS/',documento,"_cia_aberta_",ano,".zip")
@@ -275,8 +252,6 @@ dados_cvm_dfp <- function(documento, ano, tipo) {
   } else {
     warning("Tipo nao identificado")
   }
-
-
   if (tipo == "dmpl") {
     Tabela <- Tabela[,c("CNPJ_CIA","DT_REFER","DENOM_CIA","GRUPO_DFP","MOEDA","ESCALA_MOEDA","COLUNA_DF","CD_CONTA","DS_CONTA","ORDEM_EXERC","VL_CONTA")]
     Temp <- Tabela[,c("CNPJ_CIA","DENOM_CIA","GRUPO_DFP","MOEDA","ESCALA_MOEDA","COLUNA_DF","CD_CONTA","DS_CONTA")]
@@ -295,51 +270,45 @@ dados_cvm_dfp <- function(documento, ano, tipo) {
   return(Tabela)
 }
 
-#Fundos de Investimento: Documentos Extrato das Informacoes
-dados_cvm_extrato_inf <- function(dt_ini = 2015, dt_fim = 2020) {
-  datas <- dt_ini:dt_fim
-  for (i in datas) {
-    url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_',i,'.csv')
-    if (i == datas[1]) {
-      assign(paste0("extrato_",datas[1]),read.csv(url, sep = ";", quote = "" ,stringsAsFactors = FALSE))
-    } else {
-      url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_',i,'.csv')
-      assign(paste0("extrato_",datas[1]), rbind(get(paste0("extrato_",datas[1])), read.csv(url, sep = ";", quote = "", stringsAsFactors = FALSE)))
-    }
+#Fundos estruturados
+dados_cvm_fi_estruturado <- function() {
+  data <- Sys.Date()
+  data_alt <- format(data, "%Y%m")
+  url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
+  while(url.exists(url) == FALSE) {
+    data <- seq(data, length = 2, by = "-1 month")[2]
+    data_alt <- format(data, "%Y%m")
+    url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
   }
-  assign("tabela",get(paste0("extrato_",datas[1])))
-  return(tabela)
+  Tabela <- read.csv(url, sep = ";")
+  return(Tabela)
 }
 
-#Fundos de Investimento Documentos: Perfil Mensal
-dados_cvm_perfil_mensal <- function(dt_ini = "2019-05-31", dt_fim = Sys.Date()-1) {
-  datas <- bizseq(dt_ini, dt_fim)
-  datas <- unique(format(datas, "%Y%m"))
-  for (i in datas) {
-    url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_',i,'.csv')
-    if (i == datas[1]) {
-      assign(paste0("perfil_",datas[1]),read.csv(url, sep = ";", quote = "", stringsAsFactors = FALSE))
-    } else {
-      url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_',i,'.csv')
-      assign(paste0("perfil_",datas[1]), rbind(get(paste0("perfil_",datas[1])), read.csv(url, sep = ";", quote = "", stringsAsFactors = FALSE)))
-    }
+#Fundos ICVM555
+dados_cvm_fi_icvm555 <- function() {
+  data <- Sys.Date()
+  data_alt <- format(data, "%Y%m")
+  url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
+  while(url.exists(url) == FALSE) {
+    data <- seq(data, length = 2, by = "-1 month")[2]
+    data_alt <- format(data, "%Y%m")
+    url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
   }
-  assign("tabela",get(paste0("perfil_",datas[1])))
-  return(tabela)
-}
+  destfile <- "Temp.zip"
+  download.file(url = url, destfile = destfile, mode ="wb")
+  unzip(zipfile = destfile)
+  Lamina_FI <- read.csv(paste0("lamina_fi_",data_alt,".csv"), sep = ";")
+  Lamina_FI_Carteira <- read.csv(paste0("lamina_fi_carteira_",data_alt,".csv"), sep = ";")
+  Lamina_FI_Rentab_Ano <- read.csv(paste0("lamina_fi_rentab_ano_",data_alt,".csv"), sep = ";")
+  Lamina_FI_Rentab_Mes <- read.csv(paste0("lamina_fi_rentab_mes_",data_alt,".csv"), sep = ";")
 
-#Informe Trimestral FIP
-dados_cvm_inf_tri_fip <- function(dt_ini = 2018, dt_fim = 2020) {
-  datas <- dt_ini:dt_fim
-  for (i in datas) {
-    url <- paste0('http://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fip_',i,'.csv')
-    if (i == datas[1]) {
-      assign(paste0("inf_tri_fip_",datas[1]),read.csv(url, sep = ";", quote = "" ,stringsAsFactors = FALSE))
-    } else {
-      url <- paste0('http://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fip_',i,'.csv')
-      assign(paste0("inf_tri_fip_",datas[1]), rbind(get(paste0("inf_tri_fip_",datas[1])), read.csv(url, sep = ";", quote = "", stringsAsFactors = FALSE)))
-    }
-  }
-  assign("tabela",get(paste0("inf_tri_fip_",datas[1])))
-  return(tabela)
+  Lamina_FI <- Lamina_FI[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"PUBLICO_ALVO",	"OBJETIVO",	"POLIT_INVEST",	"RISCO_PERDA",	"RISCO_PERDA_NEGATIVO",	"INVEST_INICIAL_MIN",	"INVEST_ADIC",	"RESGATE_MIN",	"VL_MIN_PERMAN",	"QT_DIA_CONVERSAO_COTA_RESGATE",	"TP_TAXA_ADM",	"TAXA_ADM",	"TAXA_ADM_MIN",	"TAXA_ADM_MAX",	"TAXA_ADM_OBS",	"TAXA_ENTR",	"TAXA_PERFM",	"VL_PATRIM_LIQ",	"CLASSE_RISCO_ADMIN",	"INDICE_REFER")]
+  Lamina_FI_Carteira <- Lamina_FI_Carteira[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"TP_ATIVO",	"PR_PL_ATIVO")]
+  Lamina_FI_Rentab_Ano <- Lamina_FI_Rentab_Ano[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"ANO_RENTAB",	"PR_RENTAB_ANO", "PR_VARIACAO_INDICE_REFER_ANO")]
+  Lamina_FI_Rentab_Mes <- Lamina_FI_Rentab_Mes[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"MES_RENTAB",	"PR_RENTAB_MES",	"PR_VARIACAO_INDICE_REFER_MES")]
+  Lista <- list(Lamina_FI, Lamina_FI_Carteira, Lamina_FI_Rentab_Ano, Lamina_FI_Rentab_Mes)
+
+  file.remove(paste0("lamina_fi_",data_alt,".csv"), paste0("lamina_fi_carteira_",data_alt,".csv"), paste0("lamina_fi_rentab_ano_",data_alt,".csv"), paste0("lamina_fi_rentab_mes_",data_alt,".csv"), "Temp.zip")
+
+  return(Lista)
 }
