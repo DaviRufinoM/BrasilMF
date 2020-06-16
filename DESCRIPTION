@@ -1,7 +1,7 @@
 Package: BrasilMF
 Type: Package
 Title: BrasilMF
-Version: 0.1.5
+Version: 1.0.0
 Author: Davi Rufino
 Description: Library of data on the Brazilian financial market. The idea is to have a more prosperous and prepared market.
 License: MIT + file LICENSE
