@@ -63,8 +63,8 @@ dados_cvm_inf_cadastral <- function(tipo) {
             },
             "fi" = {
               data = Sys.Date()-1
-              cal <- create.calendar("Brazil/ANBIMA", holidaysANBIMA, weekdays=c("saturday", "sunday"))
-              data <- bizseq(data-5,data,cal)
+              cal <-bizdays::create.calendar("Brazil/ANBIMA", bizdays::holidaysANBIMA, weekdays=c("saturday", "sunday"))
+              data <- bizdays::bizseq(data-5,data,cal)
               data <- max(data)
               data <- format(as.Date(data,"1970-01-01"), "%Y%m%d")
               url <- paste0("http://dados.cvm.gov.br/dados/FI/CAD/DADOS/inf_cadastral_fi_",data,".csv")
@@ -172,7 +172,7 @@ dados_cvm_inf_cadastral <- function(tipo) {
               destfile <- "cad_consultor_vlmob.zip"
               download.file(url = url, destfile = destfile, mode ="wb")
               unzip(zipfile = destfile)
-              cad_consultor_vlmob_socios <- read.csv("cad_consultor_vlmob_pf.csv", sep = ";", quote = "", stringsAsFactors = FALSE)
+              cad_consultor_vlmob_socios <- read.csv("cad_consultor_vlmob_socios.csv", sep = ";", quote = "", stringsAsFactors = FALSE)
               file.remove("cad_consultor_vlmob_pj.csv","cad_consultor_vlmob_pf.csv","cad_consultor_vlmob_diretor.csv","cad_consultor_vlmob_socios.csv","cad_consultor_vlmob.zip")
               return(cad_consultor_vlmob_socios)
             },
@@ -252,7 +252,7 @@ dados_cvm_dfp <- function(documento, ano, tipo) {
   } else {
     warning("Tipo nao identificado")
   }
-  if (tipo == "dmpl") {
+  if (documento == "dmpl") {
     Tabela <- Tabela[,c("CNPJ_CIA","DT_REFER","DENOM_CIA","GRUPO_DFP","MOEDA","ESCALA_MOEDA","COLUNA_DF","CD_CONTA","DS_CONTA","ORDEM_EXERC","VL_CONTA")]
     Temp <- Tabela[,c("CNPJ_CIA","DENOM_CIA","GRUPO_DFP","MOEDA","ESCALA_MOEDA","COLUNA_DF","CD_CONTA","DS_CONTA")]
     Temp <- unique(Temp)
@@ -263,7 +263,7 @@ dados_cvm_dfp <- function(documento, ano, tipo) {
   }
   Temp_antes <- unique(merge(Temp, Tabela[Tabela$ORDEM_EXERC == Tabela$ORDEM_EXERC[1],], all.x = TRUE))
   Temp_depois <- unique(merge(Temp, Tabela[Tabela$ORDEM_EXERC == Tabela$ORDEM_EXERC[2],], all.x = TRUE))
-  Tabela <- bind_cols(Temp, "ANTERIOR" = Temp_antes[,ncol(Temp_antes)], "ATUAL" = Temp_depois[,ncol(Temp_depois)])
+  Tabela <- dplyr::bind_cols(Temp, "ANTERIOR" = Temp_antes[,ncol(Temp_antes)], "ATUAL" = Temp_depois[,ncol(Temp_depois)])
 
   file.remove(paste0(documento,"_cia_aberta_con_",ano,".csv"), paste0(documento,"_cia_aberta_ind_",ano,".csv"), "Temp.zip")
 
@@ -275,7 +275,7 @@ dados_cvm_fi_estruturado <- function() {
   data <- Sys.Date()
   data_alt <- format(data, "%Y%m")
   url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
-  while(url.exists(url) == FALSE) {
+  while(RCurl::url.exists(url) == FALSE) {
     data <- seq(data, length = 2, by = "-1 month")[2]
     data_alt <- format(data, "%Y%m")
     url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
@@ -289,7 +289,7 @@ dados_cvm_fi_icvm555 <- function() {
   data <- Sys.Date()
   data_alt <- format(data, "%Y%m")
   url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
-  while(url.exists(url) == FALSE) {
+  while(RCurl::url.exists(url) == FALSE) {
     data <- seq(data, length = 2, by = "-1 month")[2]
     data_alt <- format(data, "%Y%m")
     url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')

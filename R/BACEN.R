@@ -16,13 +16,12 @@ dados_bacen <- function(cod, dt_ini = Sys.Date()-365,dt_fim = Sys.Date()) {
 }
 
 procura_bacen <- function(palavra = "") {
-  load("data//INFO_BCB.RData")
   total <- nrow(INF_BACEN)
   pb <- txtProgressBar(min = 0, max = total, style = 3)
     for (i in 1:nrow(INF_BACEN)) {
     if (gregexpr(palavra,INF_BACEN$Desc)[[i]][1] > 1) {
       if (exists("bacen_infor")) {
-        bacen_infor <- bind_rows(bacen_infor, INF_BACEN[i,])
+        bacen_infor <-dplyr::bind_rows(bacen_infor, INF_BACEN[i,])
       } else {
         bacen_infor <- INF_BACEN[i,]
       }
