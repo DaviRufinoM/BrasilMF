@@ -11,5 +11,5 @@ mf_noticias(origem)
 Procura as ultimas informacoes do mercado financeiro
 }
 \examples{
-mf_noticias("cvm")
+mf_noticias("uol")
 }
