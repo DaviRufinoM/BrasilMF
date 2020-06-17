@@ -11,5 +11,5 @@ dados_anbima(info)
 Procura as principais funcoes da ANBIMA site http://www.debentures.com.br/exploreosnd/exploreosnd.asp#26
 }
 \examples{
-dados_anbima("debenture_secundario")
+dados_anbima("estrutura_termo")
 }

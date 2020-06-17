@@ -1,16 +1,19 @@
-Package: BrasilMF
 Type: Package
+Package: BrasilMF
 Title: BEST BRAZILIAN FINANCIAL MARKET PACKAGE
 Version: 1.0.0
-Author: Davi Rufino
+Authors@R: person(given = "Davi",
+             family = "Rufino",
+             role = c("aut", "cre"),
+             email = "davirufino@gmail.com",
+             comment = "")
 Description: Library of data on the Brazilian financial market. The idea is to have a more prosperous and prepared market.
 License: MIT + file LICENSE
 URL: https://github.com/SrMercado/BrasilMF
 BugReports: https://github.com/SrMercado/BrasilMF/issues
-Maintainer: Davi Rufino <davirufino@gmail.com>
-LazyData: true
 Depends: R (>= 3.6.0)
 Imports: bizdays, dplyr, rvest, RCurl, xml2
 Encoding: UTF-8
+LazyData: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0

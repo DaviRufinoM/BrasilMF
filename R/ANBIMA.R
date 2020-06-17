@@ -1,5 +1,5 @@
 dados_anbima <- function(info) {
-  switch (object,
+  switch (info,
           "estrutura_termo" = {
             url <- "https://www.anbima.com.br/informacoes/est-termo/CZ-down.asp"
 
@@ -26,14 +26,30 @@ dados_anbima <- function(info) {
           "debenture_secundario" = {
             i <- 0
             while (RCurl::url.exists(url)==FALSE) {
-              data <- Sys.Date() - i
-              data <- format("%d%m%y")
+              data <- as.Date(Sys.Date() - i)
+              data <- format(data, "%y%m%d")
               url <- paste0("https://www.anbima.com.br/informacoes/merc-sec-debentures/arqs/db",data,".txt")
               i <-i + 1
             }
 
             tabela <- read.table(url, sep = "@", skip = 2, fill = TRUE, header = TRUE, dec = ",")
             colnames(tabela) <- c("Codigo","Nome","Repactuacao_Vencimento","Indice_Correcao","Taxa_Compra","Taxa_Venda","Taxa_Indicativa","Desvio_Padrao","Intervalo_Indicativo_Minimo","Intervalo_Indicativo_Maximo","PU","Perc_PU_Par","Duration","Perc_Reune","Referencia_NTN_B")
+            tabela$Taxa_Compra <- gsub("--", NA, tabela$Taxa_Compra)
+            tabela$Taxa_Compra <- gsub("\\,", "\\.", tabela$Taxa_Compra)
+            tabela$Taxa_Compra <- as.numeric(tabela$Taxa_Compra)
+            tabela$Taxa_Venda <- gsub("--", NA, tabela$Taxa_Venda)
+            tabela$Taxa_Venda <- gsub("\\,", "\\.", tabela$Taxa_Venda)
+            tabela$Taxa_Venda <- as.numeric(tabela$Taxa_Venda)
+            tabela$PU <- gsub("N/D", NA, tabela$PU)
+            tabela$PU <- gsub("\\,", "\\.", tabela$PU)
+            tabela$PU <- as.numeric(tabela$PU)
+            tabela$Perc_PU_Par <- gsub("N/D", NA, tabela$Perc_PU_Par)
+            tabela$Perc_PU_Par <- gsub("\\,", "\\.", tabela$Perc_PU_Par)
+            tabela$Perc_PU_Par <- as.numeric(tabela$Perc_PU_Par)
+            tabela$Duration <- gsub("N/D", NA, tabela$Duration)
+            tabela$Duration <- gsub("\\,", "\\.", tabela$Duration)
+            tabela$Duration <- as.numeric(tabela$Duration)
+
             return(tabela)
           }
   )

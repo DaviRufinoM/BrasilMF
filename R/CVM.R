@@ -1,12 +1,12 @@
 #Fundos Estruturados: Informacao Cadastral
-dados_cvm_inf_cadastral <- function(tipo) {
+dados_cvm <- function(info) {
   validos <- c("fie","fie_adiministrador","fie_auditor","fie_gestor","auditor_pj","auditor_pf","fi","participante_intermediario_empresa",
                "participante_intermediario_responsavel","agente_autonomo_pj","agente_autonomo_pf", "cias_incentivadas", "cias_estrangeiras", "cias_abertas",
                "representante_inv_n_residente_pj", "representante_inv_n_residente_pf", "consultor_pj", "consultor_pf", "consultor_diretor", "consultor_socios",
                "administrador_fii", "administrador_carteira_pj", "administrador_carteira_pf", "administrador_carteira_diretor", "administrador_carteira_socios",
                "administrador_carteira_responsaveis")
-  if (tipo %in% validos) {
-    switch (tipo,
+  if (info %in% validos) {
+    switch (info,
             "fie" = {
               url <- 'http://dados.cvm.gov.br/dados/FIE/CAD/DADOS/cad_fie.zip'
               destfile <- "cad_fie.zip"
@@ -225,11 +225,52 @@ dados_cvm_inf_cadastral <- function(tipo) {
               cad_adm_cart_resp <- read.csv("cad_adm_cart_resp.csv", sep = ";", quote = "", stringsAsFactors = FALSE)
               file.remove("cad_adm_cart_pj.csv","cad_adm_cart_pf.csv","cad_adm_cart_diretor.csv","cad_adm_cart_resp.csv","cad_adm_cart_socios.csv","cad_adm_cart.zip")
               return(cad_adm_cart_resp)
+            },
+            "fi_estruturado" = {
+              data <- Sys.Date()
+              data_alt <- format(data, "%Y%m")
+              url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
+              while(RCurl::url.exists(url) == FALSE) {
+                data <- seq(data, length = 2, by = "-1 month")[2]
+                data_alt <- format(data, "%Y%m")
+                url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
+              }
+              Tabela <- read.csv(url, sep = ";")
+              return(Tabela)
+            },
+            "fi_icvm_555" = {
+              data <- Sys.Date()
+              data_alt <- format(data, "%Y%m")
+              url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
+              while(RCurl::url.exists(url) == FALSE) {
+                data <- seq(data, length = 2, by = "-1 month")[2]
+                data_alt <- format(data, "%Y%m")
+                url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
+              }
+              destfile <- "Temp.zip"
+              download.file(url = url, destfile = destfile, mode ="wb")
+              unzip(zipfile = destfile)
+              Lamina_FI <- read.table(paste0("lamina_fi_",data_alt,".csv"), header = FALSE, sep = ";",col.names = paste0("V",seq_len(141)), fill = TRUE)
+              Lamina_FI <- Lamina_FI[,1:76]
+              colnames(Lamina_FI) <- c('CNPJ_FUNDO',	'DENOM_SOCIAL',	'DT_COMPTC',	'NM_FANTASIA',	'ENDER_ELETRONICO',	'PUBLICO_ALVO',	'RESTR_INVEST',	'OBJETIVO',	'POLIT_INVEST',	'PR_PL_ATIVO_EXTERIOR',	'PR_PL_ATIVO_CRED_PRIV',	'PR_PL_ALAVANC',	'PR_ATIVO_EMISSOR',	'DERIV_PROTECAO_CARTEIRA',	'RISCO_PERDA',	'RISCO_PERDA_NEGATIVO',	'PR_PL_APLIC_MAX_FUNDO_UNICO',	'INVEST_INICIAL_MIN',	'INVEST_ADIC',	'RESGATE_MIN',	'HORA_APLIC_RESGATE',	'VL_MIN_PERMAN',	'QT_DIA_CAREN',	'CONDIC_CAREN',	'CONVERSAO_COTA_COMPRA',	'QT_DIA_CONVERSAO_COTA_COMPRA',	'CONVERSAO_COTA_CANC',	'QT_DIA_CONVERSAO_COTA_RESGATE',	'TP_DIA_PAGTO_RESGATE',	'QT_DIA_PAGTO_RESGATE',	'TP_TAXA_ADM',	'TAXA_ADM',	'TAXA_ADM_MIN',	'TAXA_ADM_MAX',	'TAXA_ADM_OBS',	'TAXA_ENTR',	'CONDIC_ENTR',	'QT_DIA_SAIDA',	'TAXA_SAIDA',	'CONDIC_SAIDA',	'TAXA_PERFM',	'PR_PL_DESPESA',	'DT_INI_DESPESA',	'DT_FIM_DESPESA',	'ENDER_ELETRONICO_DESPESA',	'VL_PATRIM_LIQ',	'CLASSE_RISCO_ADMIN',	'PR_RENTAB_FUNDO_5ANO',	'INDICE_REFER',	'PR_VARIACAO_INDICE_REFER_5ANO',	'QT_ANO_PERDA',	'DT_INI_ATIV_5ANO',	'ANO_SEM_RENTAB',	'CALC_RENTAB_FUNDO_GATILHO',	'PR_VARIACAO_PERFM',	'CALC_RENTAB_FUNDO',	'RENTAB_GATILHO',	'DS_RENTAB_GATILHO',	'ANO_EXEMPLO',	'ANO_ANTER_EXEMPLO',	'VL_RESGATE_EXEMPLO',	'VL_IMPOSTO_EXEMPLO',	'VL_TAXA_ENTR_EXEMPLO',	'VL_TAXA_SAIDA_EXEMPLO',	'VL_AJUSTE_PERFM_EXEMPLO',	'VL_DESPESA_EXEMPLO',	'VL_DESPESA_3ANO',	'VL_DESPESA_5ANO',	'VL_RETORNO_3ANO',	'VL_RETORNO_5ANO',	'REMUN_DISTRIB',	'DISTRIB_GESTOR_UNICO',	'CONFLITO_VENDA',	'TEL_SAC',	'ENDER_ELETRONICO_RECLAMACAO',	'INF_SAC')
+              Lamina_FI_Carteira <- read.csv(paste0("lamina_fi_carteira_",data_alt,".csv"), sep = ";")
+              Lamina_FI_Rentab_Ano <- read.csv(paste0("lamina_fi_rentab_ano_",data_alt,".csv"), sep = ";")
+              Lamina_FI_Rentab_Mes <- read.csv(paste0("lamina_fi_rentab_mes_",data_alt,".csv"), sep = ";")
+
+              Lamina_FI <- Lamina_FI[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"PUBLICO_ALVO",	"OBJETIVO",	"POLIT_INVEST",	"RISCO_PERDA",	"RISCO_PERDA_NEGATIVO",	"INVEST_INICIAL_MIN",	"INVEST_ADIC",	"RESGATE_MIN",	"VL_MIN_PERMAN",	"QT_DIA_CONVERSAO_COTA_RESGATE",	"TP_TAXA_ADM",	"TAXA_ADM",	"TAXA_ADM_MIN",	"TAXA_ADM_MAX",	"TAXA_ADM_OBS",	"TAXA_ENTR",	"TAXA_PERFM",	"VL_PATRIM_LIQ",	"CLASSE_RISCO_ADMIN",	"INDICE_REFER")]
+              Lamina_FI_Carteira <- Lamina_FI_Carteira[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"TP_ATIVO",	"PR_PL_ATIVO")]
+              Lamina_FI_Rentab_Ano <- Lamina_FI_Rentab_Ano[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"ANO_RENTAB",	"PR_RENTAB_ANO", "PR_VARIACAO_INDICE_REFER_ANO")]
+              Lamina_FI_Rentab_Mes <- Lamina_FI_Rentab_Mes[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"MES_RENTAB",	"PR_RENTAB_MES",	"PR_VARIACAO_INDICE_REFER_MES")]
+              Lista <- list(Lamina_FI, Lamina_FI_Carteira, Lamina_FI_Rentab_Ano, Lamina_FI_Rentab_Mes)
+
+              file.remove(paste0("lamina_fi_",data_alt,".csv"), paste0("lamina_fi_carteira_",data_alt,".csv"), paste0("lamina_fi_rentab_ano_",data_alt,".csv"), paste0("lamina_fi_rentab_mes_",data_alt,".csv"), "Temp.zip")
+
+              return(Lista)
             }
     )
   } else {
     warning("Tipos invalidos")
-    warning("Validos apenas: fie,fie_adiministrador,fie_auditor,fie_gestor,auditor_pj,auditor_pf,fi,participante_intermediario_empresa,
+    warning("Validos apenas: fi_estruturado, fi_icvm555, fie,fie_adiministrador,fie_auditor,fie_gestor,auditor_pj,auditor_pf,fi,participante_intermediario_empresa,
                  participante_intermediario_responsavel,agente_autonomo_pj,agente_autonomo_pf, cias_incentivadas, cias_estrangeiras, cias_abertas,
                  representante_inv_n_residente_pj, representante_inv_n_residente_pf, consultor_pj, consultor_pf, consultor_diretor, consultor_socios,
                  administrador_fii, administrador_carteira_pj, administrador_carteira_pf, administrador_carteira_diretor, administrador_carteira_socios,
@@ -269,49 +310,3 @@ dados_cvm_dfp <- function(documento, ano, tipo) {
 
   return(Tabela)
 }
-
-#Fundos estruturados
-dados_cvm_fi_estruturado <- function() {
-  data <- Sys.Date()
-  data_alt <- format(data, "%Y%m")
-  url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
-  while(RCurl::url.exists(url) == FALSE) {
-    data <- seq(data, length = 2, by = "-1 month")[2]
-    data_alt <- format(data, "%Y%m")
-    url <- paste0('http://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_',data_alt,'.csv')
-  }
-  Tabela <- read.csv(url, sep = ";")
-  return(Tabela)
-}
-
-#Fundos ICVM555
-dados_cvm_fi_icvm555 <- function() {
-  data <- Sys.Date()
-  data_alt <- format(data, "%Y%m")
-  url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
-  while(RCurl::url.exists(url) == FALSE) {
-    data <- seq(data, length = 2, by = "-1 month")[2]
-    data_alt <- format(data, "%Y%m")
-    url <- paste0('http://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_',data_alt,'.zip')
-  }
-  destfile <- "Temp.zip"
-  download.file(url = url, destfile = destfile, mode ="wb")
-  unzip(zipfile = destfile)
-  Lamina_FI <- read.table(paste0("lamina_fi_",data_alt,".csv"), header = FALSE, sep = ";",col.names = paste0("V",seq_len(141)), fill = TRUE)
-  Lamina_FI <- Lamina_FI[,1:76]
-  colnames(Lamina_FI) <- c('CNPJ_FUNDO',	'DENOM_SOCIAL',	'DT_COMPTC',	'NM_FANTASIA',	'ENDER_ELETRONICO',	'PUBLICO_ALVO',	'RESTR_INVEST',	'OBJETIVO',	'POLIT_INVEST',	'PR_PL_ATIVO_EXTERIOR',	'PR_PL_ATIVO_CRED_PRIV',	'PR_PL_ALAVANC',	'PR_ATIVO_EMISSOR',	'DERIV_PROTECAO_CARTEIRA',	'RISCO_PERDA',	'RISCO_PERDA_NEGATIVO',	'PR_PL_APLIC_MAX_FUNDO_UNICO',	'INVEST_INICIAL_MIN',	'INVEST_ADIC',	'RESGATE_MIN',	'HORA_APLIC_RESGATE',	'VL_MIN_PERMAN',	'QT_DIA_CAREN',	'CONDIC_CAREN',	'CONVERSAO_COTA_COMPRA',	'QT_DIA_CONVERSAO_COTA_COMPRA',	'CONVERSAO_COTA_CANC',	'QT_DIA_CONVERSAO_COTA_RESGATE',	'TP_DIA_PAGTO_RESGATE',	'QT_DIA_PAGTO_RESGATE',	'TP_TAXA_ADM',	'TAXA_ADM',	'TAXA_ADM_MIN',	'TAXA_ADM_MAX',	'TAXA_ADM_OBS',	'TAXA_ENTR',	'CONDIC_ENTR',	'QT_DIA_SAIDA',	'TAXA_SAIDA',	'CONDIC_SAIDA',	'TAXA_PERFM',	'PR_PL_DESPESA',	'DT_INI_DESPESA',	'DT_FIM_DESPESA',	'ENDER_ELETRONICO_DESPESA',	'VL_PATRIM_LIQ',	'CLASSE_RISCO_ADMIN',	'PR_RENTAB_FUNDO_5ANO',	'INDICE_REFER',	'PR_VARIACAO_INDICE_REFER_5ANO',	'QT_ANO_PERDA',	'DT_INI_ATIV_5ANO',	'ANO_SEM_RENTAB',	'CALC_RENTAB_FUNDO_GATILHO',	'PR_VARIACAO_PERFM',	'CALC_RENTAB_FUNDO',	'RENTAB_GATILHO',	'DS_RENTAB_GATILHO',	'ANO_EXEMPLO',	'ANO_ANTER_EXEMPLO',	'VL_RESGATE_EXEMPLO',	'VL_IMPOSTO_EXEMPLO',	'VL_TAXA_ENTR_EXEMPLO',	'VL_TAXA_SAIDA_EXEMPLO',	'VL_AJUSTE_PERFM_EXEMPLO',	'VL_DESPESA_EXEMPLO',	'VL_DESPESA_3ANO',	'VL_DESPESA_5ANO',	'VL_RETORNO_3ANO',	'VL_RETORNO_5ANO',	'REMUN_DISTRIB',	'DISTRIB_GESTOR_UNICO',	'CONFLITO_VENDA',	'TEL_SAC',	'ENDER_ELETRONICO_RECLAMACAO',	'INF_SAC')
-  Lamina_FI_Carteira <- read.csv(paste0("lamina_fi_carteira_",data_alt,".csv"), sep = ";")
-  Lamina_FI_Rentab_Ano <- read.csv(paste0("lamina_fi_rentab_ano_",data_alt,".csv"), sep = ";")
-  Lamina_FI_Rentab_Mes <- read.csv(paste0("lamina_fi_rentab_mes_",data_alt,".csv"), sep = ";")
-
-  Lamina_FI <- Lamina_FI[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"PUBLICO_ALVO",	"OBJETIVO",	"POLIT_INVEST",	"RISCO_PERDA",	"RISCO_PERDA_NEGATIVO",	"INVEST_INICIAL_MIN",	"INVEST_ADIC",	"RESGATE_MIN",	"VL_MIN_PERMAN",	"QT_DIA_CONVERSAO_COTA_RESGATE",	"TP_TAXA_ADM",	"TAXA_ADM",	"TAXA_ADM_MIN",	"TAXA_ADM_MAX",	"TAXA_ADM_OBS",	"TAXA_ENTR",	"TAXA_PERFM",	"VL_PATRIM_LIQ",	"CLASSE_RISCO_ADMIN",	"INDICE_REFER")]
-  Lamina_FI_Carteira <- Lamina_FI_Carteira[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"TP_ATIVO",	"PR_PL_ATIVO")]
-  Lamina_FI_Rentab_Ano <- Lamina_FI_Rentab_Ano[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"ANO_RENTAB",	"PR_RENTAB_ANO", "PR_VARIACAO_INDICE_REFER_ANO")]
-  Lamina_FI_Rentab_Mes <- Lamina_FI_Rentab_Mes[,c("CNPJ_FUNDO",	"DENOM_SOCIAL",	"DT_COMPTC",	"MES_RENTAB",	"PR_RENTAB_MES",	"PR_VARIACAO_INDICE_REFER_MES")]
-  Lista <- list(Lamina_FI, Lamina_FI_Carteira, Lamina_FI_Rentab_Ano, Lamina_FI_Rentab_Mes)
-
-  file.remove(paste0("lamina_fi_",data_alt,".csv"), paste0("lamina_fi_carteira_",data_alt,".csv"), paste0("lamina_fi_rentab_ano_",data_alt,".csv"), paste0("lamina_fi_rentab_mes_",data_alt,".csv"), "Temp.zip")
-
-  return(Lista)
-}
-
