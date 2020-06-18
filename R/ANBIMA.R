@@ -3,20 +3,19 @@ dados_anbima <- function(info) {
           "estrutura_termo" = {
             url <- "https://www.anbima.com.br/informacoes/est-termo/CZ-down.asp"
 
-            tab1 <- read.csv(url,sep =";", nrows = 2, dec = ",")
+            tab1 <- read.table(url,sep =";", nrows = 3, dec = ",", quote = "")
             tab1 <- t(tab1)
-            tab1 <- data.frame("Beta" = row.names(tab1), "PREFIXADO" = tab1[,1], "IPCA" = tab1[,2])
-            tab1 <- tab1[2:7,]
-            row.names(tab1) <- 1:6
+            tab1 <- data.frame("Vertices" = tab1[2:7,1], "PREFIXADO" = tab1[2:7,2], "IPCA" = tab1[2:7,3], row.names = 1:6, stringsAsFactors = FALSE)
+            tab1$IPCA <- gsub("\\,", ".", tab1$IPCA)
+            tab1$PREFIXADO <- gsub("\\,", ".", tab1$PREFIXADO)
 
-            tab2 <- read.csv(url,sep =";", skip = 5, nrow = 69, dec = ",")
+            tab2 <- read.table(url,sep =";", skip = 5, nrows = 69, dec = ",", col.names = c("Vertices", "ETTJ.IPCA", "ETTJ.PREF", "Inflacao_Implicita"), quote = "", stringsAsFactors = FALSE)
             tab2$Vertices <- gsub("\\.", "", tab2$Vertices)
 
-            tab3 <- read.csv(url,sep =";", skip = 77, nrow = 10, dec = ",")
-            colnames(tab3) <- c("Vertices", "Taxas")
+            tab3 <- read.table(url,sep =";", skip = 78, nrows = 10, dec = ",", col.names = c("Vertices", "Taxas"), quote = "", stringsAsFactors = FALSE)
+            tab3$Vertices <- gsub("\\.", "", tab3$Vertices)
 
-            tab4 <- read.csv(url,sep =";", skip = 90, nrow = 31, dec = ",")
-            colnames(tab4) <- c("Titulo", "Selic", "Vencimento", "Erro")
+            tab4 <- read.table(url,sep =";", skip = 91, nrows = 31, dec = ",", col.names = c("Titulo", "Selic", "Vencimento", "Erro"), quote = "", stringsAsFactors = FALSE)
             tab4$Vencimento <- as.Date(tab4$Vencimento, format = "%d/%m/%Y")
 
             lista <- list(tab1, tab2, tab3, tab4)
