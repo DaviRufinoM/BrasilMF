@@ -1,13 +1,13 @@
 Type: Package
 Package: BrasilMF
-Title: BEST BRAZILIAN FINANCIAL MARKET PACKAGE
+Title: Best Brazilian Financial Market Package
 Version: 1.0.0
 Authors@R: person(given = "Davi",
              family = "Rufino",
              role = c("aut", "cre"),
              email = "davirufino@gmail.com",
              comment = "")
-Description: Library of data on the Brazilian financial market. The idea is to have a more prosperous and prepared market.
+Description: The package focuses on unifying the main data of the Brazilian financial market in one package, this will help the user to make the best investment decisions, for more information https://brasilmf.herokuapp.com/
 License: MIT + file LICENSE
 URL: https://github.com/SrMercado/BrasilMF
 BugReports: https://github.com/SrMercado/BrasilMF/issues
