@@ -94,7 +94,8 @@ dados_cvm <- function(info) {
               temp <- tempfile()
               download.file(url,temp)
               cad_agente_auton_pf <- read.csv(unz(temp, "cad_agente_auton_pf.csv"), sep = ";", stringsAsFactors = FALSE)
-              unlink(temp)              return(cad_agente_auton_pf)
+              unlink(temp)
+              return(cad_agente_auton_pf)
             },
             "cias_incentivadas" = {
               url <- 'http://dados.cvm.gov.br/dados/CIA_INCENT/CAD/DADOS/cad_cia_incent.csv'

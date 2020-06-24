@@ -7,12 +7,13 @@ Authors@R: person(given = "Davi",
              role = c("aut", "cre"),
              email = "davirufino@gmail.com",
              comment = "")
-Description: The package focuses on unifying the main data of the Brazilian financial market in one package, this will help the user to make the best investment decisions, for more information https://brasilmf.herokuapp.com/
+Description: Focuses on unifying the main data of the Brazilian financial market in one package, such as CVM, BACEN, Alpha Vantage this will help the user to make the best investment decisions, for more information (<https://brasilmf.herokuapp.com/>)
 License: MIT + file LICENSE
 URL: https://github.com/SrMercado/BrasilMF
 BugReports: https://github.com/SrMercado/BrasilMF/issues
 Depends: R (>= 3.6.0)
-Imports: bizdays, dplyr, rvest, RCurl, xml2, ipeadatar
+Imports: bizdays, dplyr, rvest, RCurl, xml2
+Suggests: ipeadatar, highcharter
 Encoding: UTF-8
 LazyData: yes
 Roxygen: list(markdown = TRUE)
