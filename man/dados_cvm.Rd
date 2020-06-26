@@ -16,6 +16,6 @@ dados_cvm(info)
 Pegas as demonstracoes financeiras padronizadas das companhias abertas disponibilizadas site http://dados.cvm.gov.br/
 }
 \examples{
-dados_cvm("fie")
+dados_cvm("consultor_pf")
 dados_cvm_dfp("dre",2020,"consolidada")
 }
