@@ -13,5 +13,5 @@ dados_bacen(cod, dt_ini = Sys.Date()-365,dt_fim = Sys.Date())
 Procura todas as informacoes do BACEN disponibilizada no site https://dadosabertos.bcb.gov.br/
 }
 \examples{
-dados_bacen("27749", dt_ini = "2020-01-02", dt_fim = "2020-06-12")
+dados_bacen("27749")
 }
